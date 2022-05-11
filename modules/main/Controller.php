@@ -2,13 +2,13 @@
 
 namespace Modules\Main;
 
+use Framework\JsonResponse;
+
 class Controller
 {
     public function home()
     {
-        header('Content-Type: application/json');
-        echo json_encode('homepage');
-
-        die();
+        $response = new JsonResponse(['homepage']);
+        $response->send();
     }
 }

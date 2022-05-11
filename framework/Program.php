@@ -3,10 +3,14 @@
 namespace Framework;
 
 use FastRoute;
+use Symfony\Component\ErrorHandler\BufferingLogger;
+use Symfony\Component\ErrorHandler\Debug;
+use Symfony\Component\ErrorHandler\ErrorHandler;
 
 class Program
 {
     public Request $request;
+    public Configuration $configuration;
 
     function __construct(Request $request = null)
     {
@@ -15,6 +19,8 @@ class Program
 
     public function run()
     {
+        $this->setupErrorHandling();
+        $this->loadConfiguration();
         $this->route();
     }
 
@@ -22,12 +28,8 @@ class Program
     {
         $request = \request();
 
-        $routeFilepaths = [
-            'routes/main.php'
-        ];
-
-        $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($routeFilepaths) {
-            foreach ($routeFilepaths as $routeFilepath) {
+        $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
+            foreach ($this->configuration->routeFilepaths as $routeFilepath) {
                 // dd(P_DIR.$routeFilepath);
                 $routeDefinitions = require_once P_DIR.$routeFilepath;
 
@@ -51,12 +53,24 @@ class Program
             case FastRoute\Dispatcher::FOUND:
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
-                // ... call $handler with $vars
 
-                dd('Route found');
+                // dd($handler, $vars);
+                $request->handler = $handler;
+                $handlerInstance = new $handler[0];
+                call_user_func_array([$handlerInstance, $handler[1]], $vars);
 
                 break;
         }
+    }
+
+    public function setupErrorHandling()
+    {
+        ErrorHandler::register(new ErrorHandler(new BufferingLogger(), true));
+    }
+
+    public function loadConfiguration()
+    {
+        $this->configuration = require_once P_DIR.'/config/main.php';
     }
 }
 

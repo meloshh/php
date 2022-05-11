@@ -1,11 +1,13 @@
 {
     "name": "meloshh/php",
     "require": {
-        "nikic/fast-route": "^1.3"
+        "nikic/fast-route": "^1.3",
+        "symfony/error-handler": "^6.0"
     },
     "autoload": {
         "psr-4": {
-            "Framework\\": "framework"
+            "Framework\\": "framework",
+            "Modules\\": "modules"
         },
         "files": [
             "framework/functions.php"

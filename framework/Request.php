@@ -6,8 +6,9 @@ class Request
 {
     public string $uri;
     public string $method;
-    public string $action;
+    public array $handler;
     public array $data;
+    public array $files;
     public array $headers;
     public bool $wantsJson;
 
