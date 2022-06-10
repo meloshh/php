@@ -18,7 +18,7 @@ abstract class ErrorHandler
 
         $response = new JsonResponse([
             'message' => $exception->getMessage(),
-            'file' > $exception->getFile(),
+            'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'code' => $exception->getCode(),
             'trace' => $exception->getTrace(),
