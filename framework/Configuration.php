@@ -2,7 +2,9 @@
 
 namespace Framework;
 
+use Framework\CliCommands\CreateDatabase;
 use Framework\CliCommands\Migrate;
+use Framework\CliCommands\MigrateRollback;
 
 class Configuration
 {
@@ -43,7 +45,9 @@ class Configuration
     protected array $additionalCliCommands = [];
 
     protected $builtinCliCommands = [
-        'migrate' => Migrate::class
+        'migrate' => Migrate::class,
+        'migrate:rollback' => MigrateRollback::class,
+        'createdb' => CreateDatabase::class,
     ];
 
     protected array $allCliCommands = [];

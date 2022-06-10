@@ -3,6 +3,7 @@
 namespace Framework\CliCommands;
 
 use Framework\Migrations\IMigration;
+use Framework\Migrations\Migrator;
 
 class Migrate implements ICliCommand
 {
@@ -15,14 +16,7 @@ class Migrate implements ICliCommand
             return;
         }
 
-        foreach ($program->configuration->migrations as $migrationClass) {
-            $obj = new $migrationClass();
-
-            if (! $obj instanceof IMigration) {
-                throw new \Exception($migrationClass.' does not implement IMigration');
-            }
-
-            $obj->run();
-        }
+        $migrator = new Migrator();
+        $migrator->run();
     }
 }

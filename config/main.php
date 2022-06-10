@@ -16,6 +16,9 @@ $config->sqlUsername = $_ENV['SQL_USERNAME'];
 $config->sqlPassword = $_ENV['SQL_PASSWORD'];
 $config->sqlDatabase = $_ENV['SQL_DATABASE'];
 
-$config->migrations = [];
+$config->migrations = [
+    \Framework\Migrations\CreateMigrationsTable::class,
+    \Modules\Main\Migrations\CreateUsers::class,
+];
 
 return $config;
