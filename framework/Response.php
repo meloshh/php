@@ -16,6 +16,8 @@ class Response
 
     public function send()
     {
+        http_response_code($this->status);
+
         print_r($this->data);
         die();
     }

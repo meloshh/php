@@ -1,20 +1,35 @@
 <?php
 
 use Framework\Request;
+use Framework\Program;
+
+if (! function_exists('program')) {
+    function program(): Program
+    {
+        return $GLOBALS['program'];
+    }
+}
 
 if (! function_exists('request')) {
-    function request(): Request
+    function request(): Request|null
     {
-        return $GLOBALS['program']->request;
+        return \program()->request;
     }
 }
 
 if (! function_exists('dd')) {
     function dd(... $vars)
     {
-        header('Content-Type: application/json');
-        echo json_encode($vars);
+        $response = new \Framework\JsonResponse($vars, 500);
+        $response->send();
+    }
+}
 
-        die();
+if (! function_exists('randomStr')) {
+    function randomStr(int $length = 32)
+    {
+        $token = bin2hex(random_bytes($length/2));
+
+        return $token;
     }
 }

@@ -8,13 +8,15 @@ class Request
     public string $method;
     public array $handler;
     public array $data;
-    public array $files;
     public array $headers;
+    public array $files;
+    public array $cookies;
     public bool $wantsJson;
 
     public function __construct(string $uri = null, string $method = null, array $data = null,
-        array $headers = null, bool $wantsJson = null)
+        array $headers = null)
     {
+        // uri
         if (!$uri) {
             $uri = $_SERVER['REQUEST_URI'];
         }
@@ -22,11 +24,12 @@ class Request
         if (false !== $pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
         }
-
         $this->uri = rawurldecode($uri);
 
+        // method
         $this->method = $method ?? $_SERVER['REQUEST_METHOD'];
 
+        // data
         if ($data) {
             $this->data = $data;
         } else {
@@ -34,16 +37,17 @@ class Request
             $this->data = array_merge($this->data, $_POST);
         }
 
+        // headers
         $this->headers = $headers ?? getallheaders();
 
-        if ($wantsJson) {
-            $this->wantsJson = $wantsJson;
-        } else {
-            if (isset($this->headers['Accept']) && $this->headers['Accept']) {
-                $this->wantsJson = $this->headers['Accept'] === 'application/json';
-            } else {
-                $this->wantsJson = false;
-            }
+        // getallheaders() can return false
+        if (!$this->headers) {
+            $this->headers = [];
+        }
+
+        // wantsJson
+        if (isset($this->headers['Accept'])) {
+            $this->wantsJson = $this->headers['Accept'] === 'application/json';
         }
     }
 }

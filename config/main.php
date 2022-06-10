@@ -10,4 +10,12 @@ $config->routeFilepaths = [
     'modules/main/routes.php',
 ];
 
+$config->sqlHost = $_ENV['SQL_HOST'];
+$config->sqlPort = $_ENV['SQL_PORT'];
+$config->sqlUsername = $_ENV['SQL_USERNAME'];
+$config->sqlPassword = $_ENV['SQL_PASSWORD'];
+$config->sqlDatabase = $_ENV['SQL_DATABASE'];
+
+$config->migrations = [];
+
 return $config;

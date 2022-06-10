@@ -11,4 +11,18 @@ class Controller
         $response = new JsonResponse(['homepage']);
         $response->send();
     }
+
+    public function token()
+    {
+        $response = new JsonResponse([
+            'token' => randomStr(),
+        ]);
+        $response->send();
+    }
+
+    public function exception()
+    {
+        throw new \Exception('Me exception');
+        (new JsonResponse([]))->send();
+    }
 }

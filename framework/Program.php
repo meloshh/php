@@ -2,31 +2,52 @@
 
 namespace Framework;
 
+use Dotenv\Dotenv;
 use FastRoute;
-use Symfony\Component\ErrorHandler\BufferingLogger;
-use Symfony\Component\ErrorHandler\Debug;
-use Symfony\Component\ErrorHandler\ErrorHandler;
+use Framework\CliCommands\ICliCommand;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
 
 class Program
 {
-    public Request $request;
+    public Request|null $request;
     public Configuration $configuration;
+    public Logger $logger;
 
     function __construct(Request $request = null)
     {
-        $this->request = $request ?? new Request();
+        $GLOBALS['program'] = $this;
+        $this->request = $request;
+
+        if (php_sapi_name() !== 'cli' && ! $request) {
+            $this->request = new Request();
+        }
     }
 
-    public function run()
+    public function run(): void
     {
         $this->setupErrorHandling();
+        $this->setupErrorLogging();
         $this->loadConfiguration();
-        $this->route();
+        $this->setupSession();
+
+        // dd($this->configuration);
+
+        if (php_sapi_name() === 'cli') {
+            $this->runCliCommand();
+        } else {
+            $this->route();
+        }
     }
 
-    protected function route()
+    protected function route(): void
     {
         $request = \request();
+
+        if (!$request) {
+            throw new \Exception('Trying to route without request');
+        }
 
         $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
             foreach ($this->configuration->routeFilepaths as $routeFilepath) {
@@ -63,14 +84,54 @@ class Program
         }
     }
 
-    public function setupErrorHandling()
+    protected function setupErrorHandling(): void
     {
-        ErrorHandler::register(new ErrorHandler(new BufferingLogger(), true));
+        // ErrorHandler::register(new ErrorHandler(new BufferingLogger(), true));
+
+        \Framework\ErrorHandler::setup();
     }
 
-    public function loadConfiguration()
+    protected function loadConfiguration(): void
     {
+        $this->loadEnv();
         $this->configuration = require_once P_DIR.'/config/main.php';
+    }
+
+    protected function loadEnv()
+    {
+        // path without filename
+        $dotenv = Dotenv::createImmutable(P_DIR);
+        $dotenv->load();
+    }
+
+    protected function setupSession()
+    {
+        Session::startIfNotStarted();
+    }
+
+    protected function runCliCommand()
+    {
+        global $argv;
+
+        $command = $argv[1];
+
+        // dd($this->configuration->getCliCommands());
+
+        $commandClass = $this->configuration->getCliCommands()[$command];
+
+        $commandObj = new $commandClass();
+
+        if (! $commandObj instanceof ICliCommand) {
+            throw new \Exception($commandClass.' does not implement ICliCommand');
+        }
+
+        $commandObj->run();
+    }
+
+    protected function setupErrorLogging(): void
+    {
+        $this->logger= new Logger('main');
+        $this->logger->pushHandler(new StreamHandler(P_DIR.'storage/logs/main.log', Level::Warning));
     }
 }
 
