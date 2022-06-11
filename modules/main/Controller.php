@@ -3,6 +3,8 @@
 namespace Modules\Main;
 
 use Framework\JsonResponse;
+use Framework\Response;
+use Framework\View;
 
 class Controller
 {
@@ -24,5 +26,15 @@ class Controller
     {
         throw new \Exception('Me exception');
         (new JsonResponse([]))->send();
+    }
+
+    public function view()
+    {
+        $view = new View('../modules/main/html', 'hello', [
+            'name' => 'World',
+        ]);
+
+        $response = new Response($view->getRenderStr());
+        $response->send();
     }
 }

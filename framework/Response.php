@@ -4,11 +4,11 @@ namespace Framework;
 
 class Response
 {
-    public array $data;
+    public string $data;
     public int $status;
     public array $headers = [];
 
-    public function __construct(array $data, int $status = 200)
+    public function __construct(string $data, int $status = 200)
     {
         $this->data = $data;
         $this->status = $status;
@@ -18,7 +18,7 @@ class Response
     {
         http_response_code($this->status);
 
-        print_r($this->data);
+        echo($this->data);
         die();
     }
 
