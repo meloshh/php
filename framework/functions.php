@@ -17,6 +17,13 @@ if (! function_exists('request')) {
     }
 }
 
+if (! function_exists('config')) {
+    function config(): \Framework\Configuration
+    {
+        return \program()->configuration;
+    }
+}
+
 if (! function_exists('dd')) {
     function dd(... $vars)
     {

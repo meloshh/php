@@ -5,3 +5,5 @@
 !storage/logs/.gitkeep
 /storage/sessions
 !storage/sessions/.gitkeep
+/storage/public
+!storage/public/.gitkeep

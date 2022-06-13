@@ -4,7 +4,7 @@ namespace Framework;
 
 class SQL
 {
-    private static SQL $instance;
+    private static null|SQL $instance = null;
     private \PDO $pdo;
     public bool $transactionActive = false;
 
@@ -18,11 +18,9 @@ class SQL
 
     public static function getInstance(bool $noDb = false): SQL
     {
-        if (isset(static::$instance)) {
-            return static::$instance;
+        if (! isset(static::$instance)) {
+            static::$instance = new SQL($noDb);
         }
-
-        static::$instance = new SQL($noDb);
 
         return static::$instance;
     }

@@ -10,14 +10,14 @@ class Request
     public array $data;
     public array $headers;
     public array $files;
-    public array $cookies;
+    public array $cookies = [];
     public bool $wantsJson;
 
     public function __construct(string $uri = null, string $method = null, array $data = null,
         array $headers = null)
     {
         // uri
-        if (!$uri) {
+        if (! $uri) {
             $uri = $_SERVER['REQUEST_URI'];
         }
 
@@ -33,15 +33,14 @@ class Request
         if ($data) {
             $this->data = $data;
         } else {
-            $this->data = $_GET;
-            $this->data = array_merge($this->data, $_POST);
+            $this->data = array_merge($_GET, $_POST);
         }
 
         // headers
         $this->headers = $headers ?? getallheaders();
 
         // getallheaders() can return false
-        if (!$this->headers) {
+        if (! $this->headers) {
             $this->headers = [];
         }
 
@@ -49,5 +48,11 @@ class Request
         if (isset($this->headers['Accept'])) {
             $this->wantsJson = $this->headers['Accept'] === 'application/json';
         }
+
+        // files
+        $this->files = $_FILES;
+
+        // cookies
+        $this->cookies = $_COOKIE;
     }
 }

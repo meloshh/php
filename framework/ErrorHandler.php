@@ -6,8 +6,14 @@ abstract class ErrorHandler
 {
     public static function setup()
     {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        ini_set('log_errors', 1);
+        ini_set('error_log', 'tmp/php-errors.log');
+
         set_error_handler('\Framework\ErrorHandler::error');
         set_exception_handler('\Framework\ErrorHandler::uncaughtException');
+        // register_shutdown_function('\Framework\ErrorHandler::shutdownFunction');
     }
 
     public static function uncaughtException(\Throwable $exception): void
@@ -34,5 +40,19 @@ abstract class ErrorHandler
 
         $response = new JsonResponse([$no, $str, $file, $line], 500);
         $response->send();
+    }
+
+    public static function shutdownFunction()
+    {
+        $e = error_get_last();
+
+        if ($e) {
+            if (program()->logger) {
+                program()->logger->error(implode(', ', $e));
+            }
+
+            $response = new JsonResponse($e, 500);
+            $response->send();
+        }
     }
 }

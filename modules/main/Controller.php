@@ -4,6 +4,8 @@ namespace Modules\Main;
 
 use Framework\JsonResponse;
 use Framework\Response;
+use Framework\Storage;
+use Framework\TempStorage;
 use Framework\View;
 
 class Controller
@@ -35,6 +37,16 @@ class Controller
         ]);
 
         $response = new Response($view->getRenderStr());
+        $response->send();
+    }
+
+    public function fileUpload()
+    {
+        $storage = new Storage();
+        $tempStorage = new TempStorage();
+        $storage->writeUploadedFile('public', request()->files['profilePic'], $tempStorage);
+
+        $response = new JsonResponse([]);
         $response->send();
     }
 }
