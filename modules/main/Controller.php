@@ -9,6 +9,7 @@ use Framework\Response;
 use Framework\Storage;
 use Framework\TempStorage;
 use Framework\View;
+use Rakit\Validation\Validator;
 
 class Controller
 {
@@ -74,5 +75,18 @@ class Controller
     {
         $response = new JsonResponse($_SESSION);
         $response->send();
+    }
+
+    public function validation()
+    {
+        dd(request()->data + request()->files);
+        $validator = new Validator();
+
+        $validation = $validator->validate(request()->data + request()->files, [
+            'email' => 'required',
+            'password' => 'required|min:6|max:32',
+        ]);
+
+        dd($validation->errors());
     }
 }

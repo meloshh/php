@@ -11,4 +11,5 @@ return [
     new RouteDefinition(['GET'], '/cookie', [\Modules\Main\Controller::class, 'cookie']),
     new RouteDefinition(['GET'], '/cry', [\Modules\Main\Controller::class, 'encryption']),
     new RouteDefinition(['GET'], '/sess', [\Modules\Main\Controller::class, 'session']),
+    new RouteDefinition(['POST'], '/validation', [\Modules\Main\Controller::class, 'validation'])
 ];
