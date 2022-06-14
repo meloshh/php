@@ -29,6 +29,16 @@ abstract class Session
         ]);
     }
 
+    public static function add(string $key, $value)
+    {
+        $_SESSION[$key] = $value;
+    }
+
+    public static function get(string $key): mixed
+    {
+        return array_key_exists($key, $_SESSION) ? $_SESSION[$key] : null;
+    }
+
     protected static function getStatus()
     {
         return session_status();

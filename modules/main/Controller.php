@@ -2,6 +2,8 @@
 
 namespace Modules\Main;
 
+use Framework\Cookie;
+use Framework\Encryption;
 use Framework\JsonResponse;
 use Framework\Response;
 use Framework\Storage;
@@ -47,6 +49,30 @@ class Controller
         $storage->writeUploadedFile('public', request()->files['profilePic'], $tempStorage);
 
         $response = new JsonResponse([]);
+        $response->send();
+    }
+
+    public function cookie()
+    {
+        Cookie::createOrUpdate('test_cookie', 'oreo', 3, true);
+        // Cookie::delete('test_cookie');
+
+        $response = new JsonResponse([Encryption::decrypt(Cookie::get('test_cookie'))]);
+        $response->send();
+    }
+
+    public function encryption()
+    {
+        $raw = 'Holy moly';
+        $cipher = Encryption::encrypt($raw);
+
+        $response = new Response(Encryption::decrypt($cipher));
+        $response->send();
+    }
+
+    public function session()
+    {
+        $response = new JsonResponse($_SESSION);
         $response->send();
     }
 }

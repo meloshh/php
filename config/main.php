@@ -21,4 +21,6 @@ $config->migrations = [
     \Modules\Main\Migrations\CreateUsers::class,
 ];
 
+$config->encryptionKey = $_ENV['ENCRYPTION_KEY'];
+
 return $config;

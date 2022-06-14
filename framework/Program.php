@@ -31,6 +31,7 @@ class Program
         $this->setupErrorLogging();
         $this->loadConfiguration();
         $this->setupSession();
+        $this->setupCSRF();
 
         // dd($this->configuration);
 
@@ -106,6 +107,10 @@ class Program
 
     protected function setupSession()
     {
+        if (php_sapi_name() === 'cli') {
+            return;
+        }
+
         Session::startIfNotStarted();
     }
 
@@ -132,6 +137,19 @@ class Program
     {
         $this->logger= new Logger('main');
         $this->logger->pushHandler(new StreamHandler(P_DIR.'storage/logs/main.log', Level::Warning));
+    }
+
+    protected function setupCSRF()
+    {
+        if (php_sapi_name() === 'cli') {
+            return;
+        }
+
+        if (Session::get('csrf')) {
+            return;
+        }
+
+        Session::add('csrf', randomStr(32));
     }
 }
 
